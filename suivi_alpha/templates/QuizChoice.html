@@ -1,0 +1,89 @@
+{% extends "layout.html" %} 
+
+{% block title %} Choix du Quiz {% endblock %} 
+
+{%block scrpt %}
+<!--scrpt traitement -->
+{% endblock %} 
+
+{% block navLink %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('voirResults')}}">Voir vos résultats</a>
+    </li>
+{% endblock %} 
+
+{% block welcome %}
+    <span>Bienvenue <b>{{ username }}</b></span>
+{% endblock %} 
+
+{% block main %}
+<h2 class="text-center">Choisissez un Quiz selon la difficulté</h2>
+<br />
+<div class="container">
+  <table class="table table-bordered mx-auto" style="width: 60%">
+    <thead>
+      <tr>
+        <th scope="col">Niveau de Difficulté</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody class="table-group-divider">
+      <tr>
+        <td>Quiz Facile</td>
+        <td>
+          <form action="{{ url_for('quizChoice') }}" method="post">
+            <input class="btn btn-primary" type="submit" value="Commencer" />
+            <input
+              type="hidden"
+              id="username"
+              name="username"
+              value="{{ username }}"
+            />
+            <input type="hidden" id="quiztype" name="quiztype" value="facile" />
+          </form>
+        </td>
+      </tr>
+      <tr>
+        <td>Quiz Intermédiaire</td>
+        <td>
+          <form action="{{ url_for('quizChoice') }}" method="post">
+            <input class="btn btn-primary" type="submit" value="Commencer" />
+            <input
+              type="hidden"
+              id="username"
+              name="username"
+              value="{{ username }}"
+            />
+            <input
+              type="hidden"
+              id="quiztype"
+              name="quiztype"
+              value="intermediaire"
+            />
+          </form>
+        </td>
+      </tr>
+      <tr>
+        <td>Quiz Difficile</td>
+        <td>
+          <form action="{{ url_for('quizChoice') }}" method="post">
+            <input class="btn btn-primary" type="submit" value="Commencer" />
+            <input
+              type="hidden"
+              id="username"
+              name="username"
+              value="{{ username }}"
+            />
+            <input
+              type="hidden"
+              id="quiztype"
+              name="quiztype"
+              value="difficile"
+            />
+          </form>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endblock %}

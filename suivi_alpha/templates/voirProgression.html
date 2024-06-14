@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Progression de l'utilisateur
+{% endblock %}
+
+{% block navLink %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('home') }}">Retour</a>
+    </li>
+{% endblock %}
+
+{% block welcome %}
+    {% if admin %}
+        <span>Bienvenue <b>{{ admin }}</b></span>
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+    <div class="container mt-5">
+        <h2>Progression de l'utilisateur : "{{ username }}"</h2>
+        <p class="lead">Visualisez la progression de vos scores de quiz au fil du temps.</p>
+        <div class="mt-4">
+            <img src="/static/img/stats/plot.png" alt="Graphique de progression des scores de quiz" class="img-fluid">
+        </div>
+    </div>
+{% endblock %}

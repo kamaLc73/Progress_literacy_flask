@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+
+{% block title %} Résultats des Quiz {% endblock %}
+
+{% block scrpt %}
+<style>
+    .table-container {
+        display: flex;
+        justify-content: center;
+    }
+    .quiz-table {
+        max-width: 75%; /* Adjust the max-width as needed */
+        width: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block navLink %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('home') }}">Retour</a>
+    </li>
+{% endblock %}
+
+{% block welcome %}
+    {% if admin %}
+        <span>Bienvenue <b>{{ admin }}</b></span>
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+    <div class="container mt-5">
+        <h1 class="text-center">Résultats des Quiz pour : "{{ username }}"</h1>
+        <hr>
+        <div class="table-container">
+            {% if quizzes %}
+                <table class="table table-striped table-bordered mt-4 quiz-table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Numéro de Quiz</th>
+                            <th scope="col">Type de Quiz</th>
+                            <th scope="col">Score</th>
+                            <th scope="col">Durée (secondes)</th>
+                            <th scope="col">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set quizzes_length = quizzes|length %}
+                        {% for index in range(1, quizzes_length + 1) %}
+                        <tr>
+                            <td>{{ quizzes_length - index + 1 }}</td>
+                            <td>{{ quizzes[index - 1][0] }}</td>
+                            <td>{{ quizzes[index - 1][1] }} / 20</td>
+                            <td>{{ quizzes[index - 1][2] }} s</td>
+                            <td>{{ quizzes[index - 1][3] }}</td>
+                        </tr>
+                        {% endfor %}       
+                    </tbody>
+                </table>
+            {% else %}
+                {% if admin %}        
+                    <div class="alert alert-info text-center mt-4">
+                        L'apprenant n'a pas encore passé de quiz !
+                    </div>
+                {% else %}
+                    <div class="alert alert-info text-center mt-4">
+                        Vous n'avez pas encore passé de quiz. Veuillez en passer un pour voir les résultats ici.
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <form action="{{ url_for('voirProgression') }}" method="GET">
+            <input type="hidden" name="username"id="username" value="{{ username }}">
+            <button type="submit" class="btn btn-primary">Voir la progression</button>
+        </form>     
+    </div>
+{% endblock %}

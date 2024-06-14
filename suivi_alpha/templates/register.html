@@ -1,0 +1,194 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    S'inscrire
+{% endblock %}
+
+{% block scrpt %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#user_type').change(function() {
+                var userType = $(this).val();
+                if (userType === "admin") {
+                    $('#confidentialPasswordDiv').show();
+                } else {
+                    $('#confidentialPasswordDiv').hide();
+                }
+
+                if (userType === "user") {
+                    $('#learnerForm').show();
+                    $('#learnerForm input, #learnerForm select').prop('required', true);
+                } else {
+                    $('#learnerForm').hide();
+                    $('#learnerForm input, #learnerForm select').prop('required', false);
+                }
+            });
+
+            $('#registrationForm').submit(function() {
+                var userType = $('#user_type').val();
+                if (userType === "admin") {
+                    var confidentialPass = $('#confidentialPass').val();
+                    if (confidentialPass !== "1111") {
+                        alert("Mot de passe confidentiel invalide. Veuillez réessayer.");
+                        return false;
+                    }
+                }
+                return true;
+            });
+        });
+    </script>  
+    <style>
+        input[type=text], input[type=password], .form-select, input[type=number] {
+            width: 300px;
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+    <h2 class="text-center">S'inscrire:</h2>
+    <br>
+
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form id="registrationForm" action="{{ url_for('register') }}" method="post">
+                    <div class="mb-3 row align-items-center">
+                        <label for="username" class="col-sm-3 col-form-label text-end">Nom d'utilisateur:</label>
+                        <div class="col-sm-9">
+                            <input autocomplete="off" autofocus class="form-control" id="username" name="username" placeholder="Username" type="text" maxlength="20" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row align-items-center">
+                        <label for="password" class="col-sm-3 col-form-label text-end">Mot de passe:</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" id="password" name="password" placeholder="Password" type="password" maxlength="20" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3 row align-items-center">
+                        <label for="confirmation" class="col-sm-3 col-form-label text-end">Confirmer votre mot de passe:</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" id="confirmation" name="confirmation" placeholder="Confirm Password" type="password" maxlength="20" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row align-items-center">
+                        <label for="user_type" class="col-sm-3 col-form-label text-end">Type d'utilisateur</label>
+                        <div class="col-sm-9">                                
+                            <select class="form-select" id="user_type" name="user_type" required>
+                                <option selected>Choisis un type</option> 
+                                <option value="user">User</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="confidentialPasswordDiv" style="display:none;" class="mb-3 row align-items-center">
+                        <label for="confidentialPass" class="col-sm-3 col-form-label text-end">Code confidential:   </label>
+                        <div class="col-sm-9">
+                            <input class="form-control" id="confidentialPass" name="confidentialPass" placeholder="Confidential Password" type="password" maxlength="20">
+                        </div>
+                    </div>
+
+                    <div id="learnerForm" style="display:none;">
+                        <div class="mb-3 row align-items-center">
+                            <label for="nom" class="col-sm-3 col-form-label text-end">Nom:</label>
+                            <div class="col-sm-9">
+                                <input type="text" id="nom" name="nom" class="form-control" placeholder="Nom">
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row align-items-center">
+                            <label for="prenom" class="col-sm-3 col-form-label text-end">Prénom:</label>
+                            <div class="col-sm-9">
+                                <input type="text" id="prenom" name="prenom" class="form-control"  placeholder="Prénom">
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row align-items-center">
+                            <label for="age" class="col-sm-3 col-form-label text-end">Age:</label>
+                            <div class="col-sm-9">
+                                <input type="number" id="age" name="age" class="form-control"  placeholder="Age">
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row align-items-center">
+                            <label for="sexe" class="col-sm-3 col-form-label text-end">Sexe:</label>
+                            <div class="col-sm-9">
+                                <select id="sexe" name="sexe" class="form-select">
+                                    <option selected>Choisis un Sexe</option> 
+                                    <option value="M">Masculin</option>
+                                    <option value="F">Féminin</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row align-items-center">
+                            <label for="milieu" class="col-sm-3 col-form-label text-end">Milieu:</label>
+                            <div class="col-sm-9">
+                                <select id="milieu" name="milieu" class="form-select">
+                                    <option selected>Choisis un milieu</option>
+                                    <option value="urbain">Urbain</option>
+                                    <option value="rural">Rural</option>
+                                    <option value="suburbain">Suburbain</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row align-items-center">
+                            <label for="classe_sociale" class="col-sm-3 col-form-label text-end">Classe Sociale:</label>
+                            <div class="col-sm-9">
+                                <select id="classe_sociale" name="classe_sociale" class="form-select">
+                                    <option selected>Choisis une classe sociale</option>
+                                    <option value="c1">Classe 1</option>
+                                    <option value="c2">Classe 2</option>
+                                    <option value="c3">Classe 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3 row align-items-center">
+                            <label for="niveau_initial" class="col-sm-3 col-form-label text-end">Niveau Initial:</label>
+                            <div class="col-sm-9">
+                                <select id="niveau_initial" name="niveau_initial" class="form-select">
+                                    <option selected>Choisis un niveau initial(sur 5)</option>
+                                    <option value="n1">Niveau 1</option>
+                                    <option value="n2">Niveau 2</option>
+                                    <option value="n3">Niveau 3</option>
+                                    <option value="n4">Niveau 4</option>
+                                    <option value="n5">Niveau 5</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row align-items-center">
+                            <label for="methodeApprentissage" class="col-sm-3 col-form-label text-end">Méthode d'Apprentissage:</label>
+                            <div class="col-sm-9">
+                                <select id="methodeApprentissage" name="methodeApprentissage" class="form-select">
+                                    <option selected>Choisis une méthode</option>
+                                    <option value="m1">phonétique</option>
+                                    <option value="m2">idéovisuelle</option>
+                                    <option value="m3">la lecture guidée avec un enseignant</option>
+                                    <option value="m4">basé sur les technologies</option>
+                                    <option value="m5">collaboratif en petits groupes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button class="btn btn-primary" type="submit">S'inscrire</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

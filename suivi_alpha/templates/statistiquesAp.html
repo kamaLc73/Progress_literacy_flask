@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Statistiques Avancées sur les apprenants
+{% endblock %}
+
+{% block navLink %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('home') }}">Retour</a>
+    </li>
+{% endblock %}
+
+{% block welcome %}
+    {% if admin %}
+        <span>Bienvenue <b>{{ admin }}</b></span>
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+    <h2>Représentation graphique des apprenants par rapport aux critéres:</h2>
+    <br>
+    <div class="container">
+        <ul class="nav nav-tabs justify-content-center">
+            <li class="nav-item">
+                <h5><a class="nav-link" aria-current="page" href="{{url_for('statistiquesAp', critere='age')}}">Par âge</a></h5>
+            </li>
+            <li class="nav-item">
+                <h5><a class="nav-link" href="{{url_for('statistiquesAp', critere='classe_sociale')}}">Par classe sociale</a></h5>
+            </li>
+            <li class="nav-item">
+                <h5><a class="nav-link" href="{{url_for('statistiquesAp', critere='milieu')}}">Par milieu</a></h5>
+            </li>
+            <li class="nav-item">
+                <h5><a class="nav-link" href="{{url_for('statistiquesAp', critere='niveau_initial')}}">Par niveau initial</a></h5>
+            </li>
+            <li class="nav-item">
+                <h5><a class="nav-link" href="{{url_for('statistiquesAp', critere='sexe')}}">Par sexe</a></h5>
+            </li>
+            <li class="nav-item">
+                <h5><a class="nav-link" href="{{url_for('statistiquesAp', critere='methodeApprentissage')}}">Par méthode d'apprentissage</a>    </h5>
+            </li>
+        </ul>
+    </div>
+
+    <div class="container mt-5">
+        <div class="mt-4">
+            <img src="/static/img/stats/apprenant.png" alt="Graphique" class="img-fluid">
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,210 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Quiz {{ quiz_type }}
+{% endblock %}
+
+{% block scrpt %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        
+        form {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .question {
+            margin-bottom: 20px;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            text-align: center;
+        }
+        
+        .option {
+            display: inline-block;
+            margin-right: 15px;
+        }
+        
+        input[type="radio"] {
+            margin-right: 5px;
+        }
+        
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }  
+        
+        h3 {
+            text-align: left;
+        }
+        
+        #timer {
+            border: 3px solid black;
+            border-radius: 5px;
+            width: 50%;
+            margin: auto;
+            text-align: center;
+            padding: 10px;
+        }
+        .confirmation-dialog {
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            padding: 20px;
+        }
+        
+        .confirmation-dialog h2 {
+            color: #007bff;
+        }
+        
+        .confirmation-dialog p {
+            color: #333;
+        }
+        
+        .confirmation-buttons {
+            margin-top: 20px;
+        }
+        
+        .confirmation-buttons button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        .confirmation-buttons button:hover {
+            background-color: #0056b3;
+        }
+        
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            let seconds = 0;
+            let timerInterval;
+
+            function startTimer() {
+                timerInterval = setInterval(function() {
+                    seconds++;
+                    $('#countdown').text(formatTime(seconds));
+                    $('#StartQuizTime').val(seconds);
+                }, 1000);
+            }
+
+            function formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            startTimer();
+        });
+    </script>    
+    <script>
+        $(document).ready(function() {
+            function updateHiddenInput(questionIndex) {
+                var selectedValue = $('input[name="answer' + questionIndex + '"]:checked').val();
+                
+                $('input[name="answer_' + questionIndex + '"]').val(selectedValue);
+            }
+    
+            $('input[type="radio"]').change(function() {
+                var questionIndex = $(this).attr('name').replace('answer', '');
+                updateHiddenInput(questionIndex);
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $("#retour").click(function(event) {
+                event.preventDefault();
+                var confirmation = confirm("Êtes-vous sûr de vouloir retourner à la page d'accueil ?");
+                if (confirmation) {
+                    window.location.href = "{{ url_for('home')}}";
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block navLink %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('home')}}" id="retour">Retour</a>
+    </li>
+{% endblock %}
+
+{% block welcome %}
+    <span>Bienvenue <b>{{ username }}</b></span>
+{% endblock %}
+
+{% block main %}
+    <div class="container" style="width: 50%;">
+        <h2>Quiz {{ quiz_type }} d'Alphabétisation</h2> 
+        <br>
+        <div id="timer">Temps écoulé : <span id="countdown" name="">00:00</span></div>
+        <br>
+        <form action="{{ url_for('resultatQuiz') }}" method="post">
+            {% for question in questions %}
+                <div class="question">
+                    <h3>{{ question["question"] }}</h3>
+                    <div class="options">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="answer{{ loop.index }}" id="option1_{{ loop.index }}" value="{{ question['options'][0] }}">
+                            <label class="form-check-label" for="option1_{{ loop.index }}">{{ question['options'][0] }}</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="answer{{ loop.index }}" id="option2_{{ loop.index }}" value="{{ question['options'][1] }}">
+                            <label class="form-check-label" for="option2_{{ loop.index }}">{{ question['options'][1] }}</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="answer{{ loop.index }}" id="option3_{{ loop.index }}" value="{{ question['options'][2] }}">
+                            <label class="form-check-label" for="option3_{{ loop.index }}">{{ question['options'][2] }}</label>
+                        </div>
+                    </div>
+                    <input type="hidden" name="answer_{{ loop.index }}" value="">
+                    <hr>
+                </div>
+            {% endfor %}
+            <input type="submit" value="Soumettre">
+            <input type="hidden" name="StartQuizTime" id="StartQuizTime" value="0">
+            <input type="hidden" id="username" name="username" value='{{ username }}'>           
+            <input type="hidden" id="quiz_type" name="quiz_type" value='{{ quiz_type }}'>
+        </form>
+    </div>
+{% endblock %}

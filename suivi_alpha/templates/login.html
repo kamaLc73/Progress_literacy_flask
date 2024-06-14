@@ -1,0 +1,44 @@
+{% extends 'layout.html' %}
+
+{% block title %} 
+    Login
+{% endblock %}
+
+{%block scrpt%}
+    <style>
+        input[type=text], input[type=password]{
+            width: 300px;
+        }
+    </style>
+{%endblock%}
+
+{% block main %}
+    <h2>Authentification</h2>
+    <br>
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+    <br>
+    <form action="/login" method="post" class="w-50 mx-auto">
+            <div class="mb-3 row align-items-center">
+                <label for="username" class="col-sm-3 col-form-label text-end">Nom d'utilisateur:</label>
+                <div class="col-sm-9">
+                    <input autocomplete="off" autofocus class="form-control" id="username" name="username" placeholder="Username" type="text">
+                </div>
+            </div>
+            <div class="mb-3 row align-items-center">
+                <label for="password" class="col-sm-3 col-form-label text-end">Mot de passe:</label>
+                <div class="col-sm-9">
+                    <input class="form-control" id="password" name="password" placeholder="Password" type="password">
+                </div>
+            </div>
+            <br>
+            <div class="text-center">
+                <button class="btn btn-primary" type="submit">S'authentifier</button>
+            </div>
+        
+    </form>
+    <br>
+{% endblock %}

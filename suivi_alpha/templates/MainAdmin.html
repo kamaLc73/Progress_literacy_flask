@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Main Admin Page
+{% endblock %}
+
+{% block scrpt %}
+    <!-- script traitement -->
+{% endblock %}
+
+{% block welcome %}
+    <span>Bienvenue <b>{{ username }}</b></span>
+{% endblock %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="row justify-content-between align-items-center mt-3">
+            <div class="col">
+                <h2 id="statistiques" class="text-left">Statistique Avancées sur :</h2>
+            </div>
+            <div class="col-auto">
+                <a class="btn btn-primary me-2" href="{{ url_for('statistiquesAp') }}">Les Apprenants</a>
+                <a class="btn btn-primary" href="{{ url_for('statistiquesQu') }}">Les Quizs</a>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="card">
+        <div class="card-header">
+            <h2>Informations des Apprenants</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>ID Apprenant</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Âge</th>
+                        <th>Classe Sociale</th>
+                        <th>Milieu</th>
+                        <th>Niveau Initial</th>
+                        <th>Sexe</th>
+                        <th>Méthode Apprentissage</th>
+                        <th>Username</th>
+                        <th>Nombre de Quiz</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in apprenant %}
+                    <tr>
+                        <td>{{ row[0] }}</td> 
+                        <td>{{ row[1] }}</td> 
+                        <td>{{ row[2] }}</td> 
+                        <td>{{ row[3] }}</td> 
+                        <td>{{ row[4] }}</td> 
+                        <td>{{ row[5] }}</td> 
+                        <td>{{ row[6] }}</td> 
+                        <td>{{ row[7] }}</td> 
+                        <td>{{ row[8] }}</td> 
+                        <td>{{ row[9] }}</td> 
+                        <td>{{ row[10] }}</td> 
+                        <td>
+                            <form action="{{ url_for('userResultat') }}" method="GET" style="display:inline;">
+                                <input type="hidden" name="id" value="{{ row[11] }}">
+                                <button type="submit" class="btn btn-primary btn-sm">Voir résultats</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row justify-content-center align-items-center mt-3">
+            <div class="col-auto">
+                <a href="#statistiques" class="btn btn-primary btn-sm">Retour en haut</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
