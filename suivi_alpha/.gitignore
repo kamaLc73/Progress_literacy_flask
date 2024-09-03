@@ -8,4 +8,5 @@ test.ipynb
 *.db
 
 # Static files
-static/
+static/img
+static/questions.json
