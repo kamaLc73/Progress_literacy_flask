@@ -2,11 +2,14 @@ from flask import Flask, flash, render_template, request, redirect, url_for, ses
 import sqlite3, json, hashlib
 from datetime import datetime
 import sqlite3
+from init_db import create_tables
 from statistique import statistique 
 import random
 
 app = Flask(__name__)
 app.secret_key = 'secret'
+
+create_tables()
 
 ###############################################
 

@@ -19,6 +19,10 @@
 
 {% block navLink %}
     <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('home') }}">Retour</a>
+    </li>    
+    
+    <li class="nav-item">
         <a class="nav-link" href="{{ url_for('ajouterQuestion') }}">Ajouter une question</a>
     </li>
 {% endblock %}
