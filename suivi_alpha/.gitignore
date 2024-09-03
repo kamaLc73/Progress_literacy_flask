@@ -1,12 +1,8 @@
-# Byte-compiled / optimized / DLL files
 __pycache__/
 
-# Jupyter Notebook
 test.ipynb
 
-# Database
 *.db
 
-# Static files
 static/img
 static/questions.json
