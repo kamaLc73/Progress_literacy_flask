@@ -32,7 +32,7 @@ class statistique():
         data.groupby(x).describe()["score"]
         mean_scores_by_ma = data.groupby(x)['score'].mean().reset_index()
         plt.figure(figsize=(12, 6))
-        sns.barplot(data=mean_scores_by_ma, x=x, y='score', palette='viridis')
+        sns.barplot(data=mean_scores_by_ma, x=x, y='score', hue=x, palette='viridis', legend=False)
         plt.xlabel(x)
         plt.ylabel('Moyenne des scores')
         plt.title(f'Moyenne des scores des apprenants par {x}')
