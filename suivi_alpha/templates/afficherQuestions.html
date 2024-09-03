@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Liste des Questions
+{% endblock %}
+
+{% block scrpt %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.delete-btn').click(function(event) {
+                if (!confirm('Êtes-vous sûr de vouloir supprimer cette question ?')) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block navLink %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('ajouterQuestion') }}">Ajouter une question</a>
+    </li>
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <h2 class="text-center">Liste des Questions</h2>
+
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                <div class="container">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+         {% endwith %}
+
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-striped table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Difficulté</th>
+                            <th>Question</th>
+                            <th>Options</th>
+                            <th>Réponse</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for question in questions %}
+                        <tr>
+                            <td>{{ question.id }}</td>
+                            <td>{{ question.difficulty }}</td>
+                            <td>{{ question.question }}</td>
+                            <td>{{ question.options | join(', ') }}</td>
+                            <td>{{ question.answer }}</td>
+                            <td>
+                                <a href="{{ url_for('editQuestion', id=question.id) }}" class="btn btn-warning btn-sm edit-btn">Modifier</a>
+                                <form action="{{ url_for('deleteQuestion', id=question.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm delete-btn">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center mt-3">
+            <div class="btn-group">
+                {% if page > 1 %}
+                    <a href="{{ url_for('afficherQuestions', page=page-1) }}" class="btn btn-primary">Précédent</a>
+                {% endif %}
+                
+                {% for p in range(1, total_pages + 1) %}
+                    <a href="{{ url_for('afficherQuestions', page=p) }}" class="btn {{ 'btn-primary' if p == page else 'btn-secondary' }}">{{ p }}</a>
+                {% endfor %}
+                
+                {% if page < total_pages %}
+                    <a href="{{ url_for('afficherQuestions', page=page+1) }}" class="btn btn-primary">Suivant</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">Statistiques des Questions</h5>
+                <ul class="list-group">
+                    <li class="list-group-item">Facile: {{ difficulty_stats.facile }}</li>
+                    <li class="list-group-item">Intermédiaire: {{ difficulty_stats.intermediaire }}</li>
+                    <li class="list-group-item">Difficile: {{ difficulty_stats.difficile }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

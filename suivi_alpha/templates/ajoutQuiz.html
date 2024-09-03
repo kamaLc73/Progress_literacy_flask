@@ -1,0 +1,130 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Ajouter une Question
+{% endblock %}
+
+{% block scrpt %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            let maxOptions = 3;
+
+            function updateOptions() {
+                let options = $('#options').val().split(',').map(opt => opt.trim()).filter(opt => opt !== '');
+                let optionsCount = options.length;
+
+                $('#optionsCount').text(`Options: ${optionsCount}`);
+                
+                if (optionsCount > maxOptions) {
+                    $('#options').val(options.slice(0, maxOptions).join(','));
+                    $('#optionsCount').text(`Options: ${maxOptions}`);
+                }
+            }
+
+            function validateForm() {
+                let options = $('#options').val().split(',').map(opt => opt.trim()).filter(opt => opt !== '');
+                let answer = $('#answer').val().trim();
+
+                if (options.length !== 3) {
+                    alert('Veuillez ajouter exactement 3 options.');
+                    return false;
+                }
+
+                if (options.length === 3 && !options.includes(answer)) {
+                    alert('La réponse correcte doit être l\'une des options fournies.');
+                    return false;
+                }
+
+                return true;
+            }
+
+            $('#options').on('input', function() {
+                setTimeout(updateOptions, 200);
+            });
+
+            $('#questionForm').submit(function(event) {
+                if (!validateForm()) {
+                    event.preventDefault();
+                }
+            });
+
+            updateOptions();
+        });
+    </script> 
+    <style>
+        input[type=text], .form-select, input[type=number] {
+            width: 100%;
+        }
+    </style>
+{% endblock %}
+
+{% block navLink %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('home')}}">Retour</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('afficherQuestions')}}">Afficher les questions</a>
+    </li>
+{% endblock %} 
+
+{% block main %}
+    <h2 class="text-center">Ajouter une Nouvelle Question</h2>
+    <br>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <form id="questionForm" action="{{ url_for('ajouterQuestion') }}" method="post">
+                    <div class="mb-3 row align-items-center">
+                        <label for="difficulty" class="col-sm-4 col-form-label text-end">Difficulté:</label>
+                        <div class="col-sm-8">
+                            <select id="difficulty" name="difficulty" class="form-select" required>
+                                <option value="" disabled selected>Choisissez un niveau de difficulté</option>
+                                <option value="facile">Facile</option>
+                                <option value="intermediaire">Intermédiaire</option>
+                                <option value="difficile">Difficile</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row align-items-center">
+                        <label for="question" class="col-sm-4 col-form-label text-end">Question:</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="question" name="question" class="form-control" placeholder="Entrez la question" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3 row align-items-center">
+                        <label for="options" class="col-sm-4 col-form-label text-end">Options (séparées par des virgules):</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="options" name="options" class="form-control" placeholder="Entrez les options" required>
+                        </div>
+                        <small id="optionsCount" class="form-text text-muted">Options: 0</small>
+                    </div>
+
+                    <div class="mb-3 row align-items-center">
+                        <label for="answer" class="col-sm-4 col-form-label text-end">Réponse:</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="answer" name="answer" class="form-control" placeholder="Entrez la réponse" required>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button class="btn btn-primary" type="submit">Ajouter Question</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

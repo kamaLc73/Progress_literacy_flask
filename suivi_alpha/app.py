@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, flash, render_template, request, redirect, url_for, session
 import sqlite3, json, hashlib
 from datetime import datetime
 import sqlite3
 from statistique import statistique 
+import random
 
 app = Flask(__name__)
 app.secret_key = 'secret'
@@ -166,14 +167,20 @@ def quizChoice():
     if request.method == 'POST':
         username = request.form.get("username")
         quiz_type = request.form.get("quiztype")
+        
         with open("static/questions.json", "r", encoding='utf-8') as json_file:
             questions_data = json.load(json_file)
-            questions = questions_data["questions"].get(quiz_type, [])
-
+            filtered_questions = [q for q in questions_data["questions"] if q["difficulty"] == quiz_type]
+        
+        if len(filtered_questions) > 20:
+            questions = random.sample(filtered_questions, 20) 
+        else:
+            questions = filtered_questions
+        
         return render_template("quiz.html", username=username, quiz_type=quiz_type, questions=questions)
     else:
         return redirect(url_for('home'))
-    
+
 ###############################################
 
 @app.route("/resultatQuiz", methods=['POST', 'GET'])
@@ -185,14 +192,29 @@ def resultatQuiz():
             duree = request.form.get("StartQuizTime")
             score = 0
 
+            import json
+
             with open("static/questions.json", "r", encoding='utf-8') as json_file:
                 questions_data = json.load(json_file)
-                correct_answers = questions_data.get("answers", {}).get(quiz_type, [])
 
             for i in range(1, 21):
+                id_question = request.form.get(f"id_{i}")
+                print("id question:",id_question)
                 user_answer = request.form.get(f"answer_{i}")
-                if user_answer in correct_answers:
+                print("user answer :",user_answer)
+
+                correct_answer = None
+                for question in questions_data.get("questions", []):
+                    if question.get("id") == int(id_question):
+                        correct_answer = question.get("answer")
+                        print("correct answer:",correct_answer)
+                        break
+
+                if user_answer == correct_answer:
                     score += 1
+
+            print(f"Score: {score}")
+
 
             conn = sqlite3.connect('database.db')
             cursor = conn.cursor()
@@ -305,12 +327,142 @@ def mainAdmin():
         return render_template("MainAdmin.html", apprenant=apprenant, username=username[0])
     else:
         return redirect(url_for('home'))
+    
+###############################################
+
+@app.route("/afficherQuestions")
+def afficherQuestions():
+    if 'user_id' not in session:
+        return redirect(url_for('home'))
+
+    with open("static/questions.json", "r", encoding='utf-8') as json_file:
+        questions_data = json.load(json_file)
+    
+    page = int(request.args.get('page', 1))
+    per_page = 10
+    total_questions = len(questions_data['questions'])
+    total_pages = (total_questions + per_page - 1) // per_page
+    
+    questions = questions_data['questions'][(page-1)*per_page : page*per_page]
+    
+    # Calculate statistics
+    difficulty_stats = {
+        'facile': sum(1 for q in questions_data['questions'] if q['difficulty'] == 'facile'),
+        'intermediaire': sum(1 for q in questions_data['questions'] if q['difficulty'] == 'intermediaire'),
+        'difficile': sum(1 for q in questions_data['questions'] if q['difficulty'] == 'difficile')
+    }
+
+    return render_template(
+        'afficherQuestions.html',
+        questions=questions,
+        page=page,
+        total_pages=total_pages,
+        difficulty_stats=difficulty_stats
+    )
+
+###############################################
+
+@app.route("/ajouterQuestion", methods=["GET", "POST"])
+def ajouterQuestion():
+    if 'user_id' not in session:
+        return redirect(url_for('home'))
+    
+    if request.method == "POST":
+        with open("static/questions.json", "r", encoding='utf-8') as json_file:
+            questions_data = json.load(json_file)
+
+        difficulty = request.form.get('difficulty')
+        question_text = request.form.get('question')
+        
+        options = [opt.strip() for opt in request.form.get('options', '').split(',') if opt.strip()]
+        answer = request.form.get('answer').strip()
+
+        if any(q['question'] == question_text for q in questions_data['questions']):
+            flash("Erreur: Cette question existe déjà. Veuillez formuler une autre question.", 'danger')
+            return redirect(url_for('ajouterQuestion'))
+                
+        next_id = max([q['id'] for q in questions_data['questions']], default=0) + 1
+
+        new_question = {
+            "id": next_id,
+            "difficulty": difficulty,
+            "question": question_text,
+            "options": options,
+            "answer": answer
+        }
+
+        questions_data["questions"].append(new_question)
+
+        with open("static/questions.json", "w", encoding='utf-8') as json_file:
+            json.dump(questions_data, json_file, ensure_ascii=False, indent=4)
+
+        flash("Votre question a été soumise avec succès. Merci pour votre participation!", 'success')
+        return redirect(url_for('afficherQuestions'))
+
+    return render_template("ajoutQuiz.html")
+
+###############################################
+
+@app.route("/editQuestion/<int:id>", methods=["GET", "POST"])
+def editQuestion(id):
+    if 'user_id' not in session:
+        return redirect(url_for('home'))
+
+    with open("static/questions.json", "r", encoding='utf-8') as json_file:
+        questions_data = json.load(json_file)
+
+    question = next((q for q in questions_data['questions'] if q['id'] == id), None)
+    if not question:
+        flash("Question non trouvée.", 'danger')
+        return redirect(url_for('afficherQuestions'))
+
+    if request.method == "POST":
+        difficulty = request.form.get('difficulty')
+        question_text = request.form.get('question')
+        options = [opt.strip() for opt in request.form.get('options', '').split(',') if opt.strip()]
+        answer = request.form.get('answer').strip()
+
+        if any(q['question'] == question_text and q['id'] != id for q in questions_data['questions']):
+            flash("Erreur: Cette question existe déjà. Veuillez formuler une autre question.", 'danger')
+            return redirect(url_for('editQuestion', id=id))
+
+        question['difficulty'] = difficulty
+        question['question'] = question_text
+        question['options'] = options
+        question['answer'] = answer
+
+        with open("static/questions.json", "w", encoding='utf-8') as json_file:
+            json.dump(questions_data, json_file, ensure_ascii=False, indent=4)
+
+        flash("Votre question a été mise à jour avec succès!", 'success')
+        return redirect(url_for('afficherQuestions'))
+
+    return render_template("editQuestion.html", question=question)
+
+###############################################
+
+@app.route("/deleteQuestion/<int:id>", methods=["POST"])
+def deleteQuestion(id):
+    if 'user_id' not in session:
+        return redirect(url_for('home'))
+
+    with open("static/questions.json", "r", encoding='utf-8') as json_file:
+        questions_data = json.load(json_file)
+
+    questions_data['questions'] = [q for q in questions_data['questions'] if q['id'] != id]
+
+    with open("static/questions.json", "w", encoding='utf-8') as json_file:
+        json.dump(questions_data, json_file, ensure_ascii=False, indent=4)
+
+    flash("Question supprimée avec succès!", 'success')
+    return redirect(url_for('afficherQuestions'))
+
 ###############################################
 
 @app.route("/userResultat", methods=["GET"])
 def userResultat():
     if 'user_id' in session:
-        user_id = request.args.get("id")  # Use request.args for GET parameters
+        user_id = request.args.get("id")  
         
         if not user_id:
             return redirect(url_for('home'))
@@ -384,5 +536,4 @@ def statistiquesQu():
 ###############################################
 
 if __name__ == "__main__":
-    app.run(debug=True)
-    
+    app.run(debug=True, host='0.0.0.0', port=5000)    

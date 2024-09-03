@@ -8,6 +8,12 @@
     <!-- script traitement -->
 {% endblock %}
 
+{% block navLink %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('afficherQuestions') }}">Afficher les questions</a>
+    </li>
+{% endblock %}
+
 {% block welcome %}
     <span>Bienvenue <b>{{ username }}</b></span>
 {% endblock %}
@@ -25,6 +31,20 @@
         </div>
     </div>
     <br>
+
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <div class="container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
     <div class="card">
         <div class="card-header">
             <h2>Informations des Apprenants</h2>
@@ -50,17 +70,17 @@
                 <tbody>
                     {% for row in apprenant %}
                     <tr>
-                        <td>{{ row[0] }}</td> 
-                        <td>{{ row[1] }}</td> 
-                        <td>{{ row[2] }}</td> 
-                        <td>{{ row[3] }}</td> 
-                        <td>{{ row[4] }}</td> 
-                        <td>{{ row[5] }}</td> 
-                        <td>{{ row[6] }}</td> 
-                        <td>{{ row[7] }}</td> 
-                        <td>{{ row[8] }}</td> 
-                        <td>{{ row[9] }}</td> 
-                        <td>{{ row[10] }}</td> 
+                        <td>{{ row[0] }}</td>
+                        <td>{{ row[1] }}</td>
+                        <td>{{ row[2] }}</td>
+                        <td>{{ row[3] }}</td>
+                        <td>{{ row[4] }}</td>
+                        <td>{{ row[5] }}</td>
+                        <td>{{ row[6] }}</td>
+                        <td>{{ row[7] }}</td>
+                        <td>{{ row[8] }}</td>
+                        <td>{{ row[9] }}</td>
+                        <td>{{ row[10] }}</td>
                         <td>
                             <form action="{{ url_for('userResultat') }}" method="GET" style="display:inline;">
                                 <input type="hidden" name="id" value="{{ row[11] }}">
