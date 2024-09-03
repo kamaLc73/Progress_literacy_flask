@@ -1,8 +1,11 @@
 import sqlite3
 import pandas as pd
+import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
+
+matplotlib.use('Agg')
 
 class statistique():
     def statistiquesAp(self, x):
