@@ -308,7 +308,7 @@ def voirResults():
 def mainAdmin():
     if 'user_id' in session:
         page = request.args.get('page', 1, type=int)
-        per_page = 8  
+        per_page = 10  
         offset = (page - 1) * per_page
 
         conn = sqlite3.connect('database.db')
