@@ -306,7 +306,11 @@ def voirResults():
 
 @app.route("/mainAdmin", methods=["GET"])
 def mainAdmin():
-    if request.method == "GET" and 'user_id' in session:
+    if 'user_id' in session:
+        page = request.args.get('page', 1, type=int)
+        per_page = 8  
+        offset = (page - 1) * per_page
+
         conn = sqlite3.connect('database.db')
         cursor = conn.cursor()
 
@@ -319,15 +323,20 @@ def mainAdmin():
             LEFT JOIN quiz q ON a.id_user = q.id_user
             GROUP BY a.id, nom, prenom, age, classe_sociale, milieu,
                      niveau_initial, sexe, methodeApprentissage, u.username
-        ''')
+            LIMIT ? OFFSET ?
+        ''', (per_page, offset))
         apprenant = cursor.fetchall()
+
+        cursor.execute('SELECT COUNT(*) FROM apprenant')
+        total_apprenants = cursor.fetchone()[0]
+        total_pages = (total_apprenants + per_page - 1) // per_page
 
         cursor.execute("SELECT username FROM user WHERE id = ?", (session['user_id'],))
         username = cursor.fetchone()
 
         conn.close()
 
-        return render_template("MainAdmin.html", apprenant=apprenant, username=username[0])
+        return render_template("MainAdmin.html", apprenant=apprenant, username=username[0], page=page, total_pages=total_pages)
     else:
         return redirect(url_for('home'))
     
@@ -348,7 +357,6 @@ def afficherQuestions():
     
     questions = questions_data['questions'][(page-1)*per_page : page*per_page]
     
-    # Calculate statistics
     difficulty_stats = {
         'facile': sum(1 for q in questions_data['questions'] if q['difficulty'] == 'facile'),
         'intermediaire': sum(1 for q in questions_data['questions'] if q['difficulty'] == 'intermediaire'),
