@@ -1,25 +1,10 @@
 nav .navbar-brand {
-  font-size: xx-large;
+  font-size: x-large;
 }
 
-nav .navbar-brand .blue {
-  color: #537fbe;
-}
-
-nav .navbar-brand .red {
-  color: #ea433b;
-}
-
-nav .navbar-brand .yellow {
-  color: #f5b82e;
-}
-
-nav .navbar-brand .green {
-  color: #2e944b;
-}
-
-header {
-  background-color: #f8f9fa;
+header, footer {
+  background-color: transparent;
+  border: none; 
 }
 
 @media (max-width: 768px) {
@@ -32,4 +17,23 @@ header {
   nav .navbar-brand {
       font-size: medium;
   }
+}
+
+body {
+  background-image: url('/static/img/bg_photo.webp');
+  background-size: cover;
+  background-repeat: no-repeat; 
+  background-attachment: fixed; 
+  background-position: center; 
+  font-weight: 700;
+  font-size: medium;
+}
+
+footer .card-body {
+  background-color: transparent;
+  border-radius: 8px; 
+}
+
+main h1, main h2, main p, main label {
+  text-shadow: 2px 2px 4px rgb(255, 255, 255);
 }
