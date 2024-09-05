@@ -2,8 +2,8 @@ from flask import Flask, flash, render_template, request, redirect, url_for, ses
 import sqlite3, json, hashlib
 from datetime import datetime
 import sqlite3
-from init_db import create_tables
-from statistique import statistique 
+from static.helpers import create_tables
+from static.statistique import statistique 
 import random
 
 app = Flask(__name__)
