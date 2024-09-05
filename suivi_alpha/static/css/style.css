@@ -20,7 +20,7 @@ header, footer {
 }
 
 body {
-  background-image: url('/static/img/bg_photo.webp');
+  background-image: url('/static/img/bg/bg_photo.webp');
   background-size: cover;
   background-repeat: no-repeat; 
   background-attachment: fixed; 
