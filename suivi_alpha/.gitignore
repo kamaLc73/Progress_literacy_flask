@@ -2,7 +2,7 @@ __pycache__/
 
 test.ipynb
 
-*.db
+# *.db
 
 static/img/stats
-static/questions.json
+# static/questions.json
