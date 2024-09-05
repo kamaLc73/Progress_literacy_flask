@@ -290,12 +290,30 @@ def voirResults():
         if user:
             username = user[0]
             
-            cursor.execute("SELECT type, score, duree, datetime FROM quiz WHERE id_user = ? ORDER BY datetime DESC", (user_id,))
+            per_page = 10   
+            page = request.args.get('page', 1, type=int)  
+            offset = (page - 1) * per_page  
+            
+            cursor.execute("SELECT COUNT(*) FROM quiz WHERE id_user = ?", (user_id,))
+            total_quizzes = cursor.fetchone()[0]
+            total_pages = (total_quizzes // per_page) + (1 if total_quizzes % per_page > 0 else 0)
+
+            cursor.execute("""
+                SELECT type, score, duree, datetime 
+                FROM quiz 
+                WHERE id_user = ? 
+                ORDER BY datetime DESC 
+                LIMIT ? OFFSET ?
+            """, (user_id, per_page, offset))
             quizzes = cursor.fetchall()
             
             conn.close()
             
-            return render_template("voirResults.html", username=username, quizzes=quizzes)
+            return render_template("voirResults.html", 
+                                   username=username, 
+                                   quizzes=quizzes, 
+                                   page=page, 
+                                   total_pages=total_pages)
         else:
             conn.close()
             return redirect(url_for('home'))
@@ -474,7 +492,7 @@ def deleteQuestion(id):
 def userResultat():
     if 'user_id' in session:
         user_id = request.args.get("id")  
-        
+
         if not user_id:
             return redirect(url_for('home'))
         
@@ -490,13 +508,32 @@ def userResultat():
         if user:
             username = user[0]
             adname = admin[0]
-             
-            cursor.execute("SELECT type, score, duree, datetime FROM quiz WHERE id_user = ? ORDER BY datetime DESC", (user_id,))
+            
+            per_page = 10 
+            page = request.args.get('page', 1, type=int)  
+            offset = (page - 1) * per_page  
+            
+            cursor.execute("SELECT COUNT(*) FROM quiz WHERE id_user = ?", (user_id,))
+            total_quizzes = cursor.fetchone()[0]
+            total_pages = (total_quizzes // per_page) + (1 if total_quizzes % per_page > 0 else 0)
+
+            cursor.execute("""
+                SELECT type, score, duree, datetime 
+                FROM quiz 
+                WHERE id_user = ? 
+                ORDER BY datetime DESC 
+                LIMIT ? OFFSET ?
+            """, (user_id, per_page, offset))
             quizzes = cursor.fetchall()
-            
+
             conn.close()
-            
-            return render_template("voirResults.html", admin=adname, username=username, quizzes=quizzes)
+
+            return render_template("voirResults.html", 
+                                   admin=adname, 
+                                   username=username, 
+                                   quizzes=quizzes, 
+                                   page=page, 
+                                   total_pages=total_pages)
         else:
             conn.close()
             return redirect(url_for('home'))
