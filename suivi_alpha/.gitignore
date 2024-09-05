@@ -4,5 +4,5 @@ test.ipynb
 
 *.db
 
-static/img
+static/img/stats
 static/questions.json
