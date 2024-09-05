@@ -8,6 +8,11 @@ import os
 matplotlib.use('Agg')
 
 class statistique():
+    def __init__(self):
+        stats_dir = os.path.join('static/img', 'stats')
+        if not os.path.exists(stats_dir):
+            os.makedirs(stats_dir)
+
     def statistiquesAp(self, x):
         conn = sqlite3.connect('static/database.db')
         apprenant = pd.read_sql("SELECT * FROM apprenant", conn)
