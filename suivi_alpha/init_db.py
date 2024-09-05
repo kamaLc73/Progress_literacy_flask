@@ -1,7 +1,7 @@
 import sqlite3
 
 def create_tables():
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect('static/database.db')
     cursor = conn.cursor()
 
     cursor.execute('''

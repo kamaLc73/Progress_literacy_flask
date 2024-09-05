@@ -9,7 +9,7 @@ matplotlib.use('Agg')
 
 class statistique():
     def statistiquesAp(self, x):
-        conn = sqlite3.connect('database.db')
+        conn = sqlite3.connect('static/database.db')
         apprenant = pd.read_sql("SELECT * FROM apprenant", conn)
         conn.close()
         plt.figure(figsize=(10, 6))
@@ -22,7 +22,7 @@ class statistique():
         plt.close()
     
     def statistiquesQu(self, x):
-        conn = sqlite3.connect('database.db')
+        conn = sqlite3.connect('static/database.db')
         quiz = pd.read_sql("SELECT * FROM quiz", conn)
         apprenant = pd.read_sql("SELECT * FROM apprenant", conn)
         conn.close()
@@ -41,7 +41,7 @@ class statistique():
         plt.close()
 
     def statistiquePr(self, username):
-        conn = sqlite3.connect('database.db')
+        conn = sqlite3.connect('static/database.db')
         cursor = conn.cursor()
 
         cursor.execute("SELECT id FROM user WHERE username = ?", (username,))

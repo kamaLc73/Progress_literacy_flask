@@ -18,7 +18,7 @@ def home():
     if 'user_id' in session:
         user_id = session['user_id']
         
-        conn = sqlite3.connect('database.db')
+        conn = sqlite3.connect('static/database.db')
         cursor = conn.cursor()
 
         cursor.execute("SELECT * FROM user WHERE id = ?", (user_id,))
@@ -41,7 +41,7 @@ def login():
         username = request.form.get("username")
         password = request.form.get("password")
 
-        conn = sqlite3.connect('database.db')
+        conn = sqlite3.connect('static/database.db')
         cursor = conn.cursor()
 
         cursor.execute("SELECT * FROM user WHERE username = ?", (username,))
@@ -73,7 +73,7 @@ def login():
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        conn = sqlite3.connect('database.db')
+        conn = sqlite3.connect('static/database.db')
         cursor = conn.cursor()
 
         username = request.form.get("username")
@@ -219,7 +219,7 @@ def resultatQuiz():
             print(f"Score: {score}")
 
 
-            conn = sqlite3.connect('database.db')
+            conn = sqlite3.connect('static/database.db')
             cursor = conn.cursor()
             current_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             cursor.execute(
@@ -238,7 +238,7 @@ def resultatQuiz():
     else:
         if 'user_id' in session:
             try:
-                conn = sqlite3.connect('database.db')
+                conn = sqlite3.connect('static/database.db')
                 cursor = conn.cursor()
 
                 cursor.execute(
@@ -281,7 +281,7 @@ def voirResults():
     if request.method == 'GET' and 'user_id' in session:
         user_id = session['user_id']
         
-        conn = sqlite3.connect('database.db')
+        conn = sqlite3.connect('static/database.db')
         cursor = conn.cursor()
 
         cursor.execute("SELECT username FROM user WHERE id = ?", (user_id,))
@@ -329,7 +329,7 @@ def mainAdmin():
         per_page = 10  
         offset = (page - 1) * per_page
 
-        conn = sqlite3.connect('database.db')
+        conn = sqlite3.connect('static/database.db')
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -496,7 +496,7 @@ def userResultat():
         if not user_id:
             return redirect(url_for('home'))
         
-        conn = sqlite3.connect('database.db')
+        conn = sqlite3.connect('static/database.db')
         cursor = conn.cursor()
 
         cursor.execute("SELECT username FROM user WHERE id = ?", (user_id,))
@@ -546,7 +546,7 @@ def userResultat():
 def voirProgression():
     if request.method == "GET" and 'user_id' in session:
         username = request.args.get("username") 
-        conn = sqlite3.connect('database.db')
+        conn = sqlite3.connect('static/database.db')
         cursor = conn.cursor()
         cursor.execute("SELECT username FROM user WHERE id = ?", (session['user_id'],))
         admin = cursor.fetchone()[0]  
